@@ -40,12 +40,7 @@ def R2(z_test, z_pred):
 	R2 = 1 - np.mean((z_test-z_pred) ** 2) / np.mean((z_test - np.mean(z_test)) ** 2)
 	return R2
 
-def VarianceCalc(z_pred):
-	#np.mean(np.var(zPred))
-	return np.mean((z_pred - np.mean(z_pred))**2 )
 
-def BiasCalc(z_test, z_pred):
-	return np.mean((z_test - np.mean(z_pred))**2)
 
 def FrankeFunction(x,y):
 	term1 = 0.75*np.exp(-(0.25*(9*x-2)**(2)) - 0.5*((9*y-2)**(2)))
