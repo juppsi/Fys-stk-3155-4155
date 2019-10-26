@@ -124,7 +124,6 @@ def BiasVarianceTradeoff(x,y,z, nBoots, degrees, maxdegree, model):
 	
 		X = Create_DesignMatrix(x, y, degree)
 		X_train, X_test, z_train, z_test = train_test_split(X, z, test_size = 0.2)
-		#model = make_pipeline(PolynomialFeatures(degree=degree),LinearRegression(fit_intercept=False))
 		zPred = np.empty((z_test.shape[0], nBoots))
 		ztilde = np.empty((z_test.shape[0], nBoots))
 
@@ -223,24 +222,19 @@ def CrossValidation(x,y,z,k, degrees, model, nlambdas):
 
 			R2_values_test.append(R2(ztest,z_pred_cv))
 			MSE_values_test.append(MSE(ztest, z_pred_cv))
-			Variance_values_test.append(VarianceCalc(z_pred_cv))
-			Bias_values_test.append(BiasCalc(ztest, z_pred_cv))
+			
 
 			z_pred_train_coef = model.fit(Xtrain_cv, ztrain)
 			z_pred_train = model.predict(Xtrain_cv)
 
 			R2_values_train.append(R2(ztrain,z_pred_train))
 			MSE_values_train.append(MSE(ztrain, z_pred_train))
-			Variance_values_train.append(VarianceCalc(z_pred_train))
-			Bias_values_train.append(BiasCalc(ztest, z_pred_train))
-
-			#print(R2_values_train)
-			#print(R2_values_test)
+	
 
 
 			j+= 1
 		i+=1 
-		estimated_mse_Kfold = np.mean(KFold_scores, axis = 1)
+		
 
 		"""
 		print(R2_values_train)
@@ -251,13 +245,7 @@ def CrossValidation(x,y,z,k, degrees, model, nlambdas):
 		print('-----')
 		print(MSE_values_test)
 		print('-----')
-		print(Variance_values_train)
-		print('-----')
-		print(Variance_values_test)
-		print('-----')
-		print(Bias_values_train)
-		print('-----')
-		print(Bias_values_test)
+		
 		"""
 
 
@@ -266,7 +254,7 @@ def CrossValidation(x,y,z,k, degrees, model, nlambdas):
 
 		average_R2_test.append(np.mean(R2_values_test))
 		average_MSE_test.append(np.mean(MSE_values_test))
-		
+		"""
 		print(average_R2_test)
 		print('-----')
 		print(average_R2_train)	
@@ -274,16 +262,14 @@ def CrossValidation(x,y,z,k, degrees, model, nlambdas):
 		print(average_MSE_test)
 		print('-----')
 		print(average_MSE_train)
+		"""
 		
 
 		plt.plot(degrees, np.array(R2_values_test), label ='R2 Test data')
 		plt.plot(degrees, np.array(R2_values_train), label='R2 Train data')
 		#plt.plot(degrees, np.array(MSE_values_test), label ='MSE Test data')
 		#plt.plot(degrees, np.array(MSE_values_train), label='MSE Train data')
-		#plt.plot(degrees, np.array(Variance_values_test), label ='Variance Test data')
-		#plt.plot(degrees, np.array(Variance_values_train), label='Variance Train data')
-		#plt.plot(degrees, np.array(Bias_values_test), '*',label ='Bias Test data')
-		#plt.plot(degrees, np.array(Bias_values_train), label='Bias Train data')
+		
 		plt.xlabel('Degree')
 		plt.ylabel('R2 Values')
 		plt.title('R2 as a function of polynomial degree %s for Terrain data. \n Lasso regression with $\lambda = 1e-7$' %deg)
@@ -316,8 +302,6 @@ plt.show()
 #print(terrain1.shape)
 # Since the shape is (3601, 1801) we define x and y as
 
-#x = np.arange(0, 1801)
-#y = np.arange(0, 3601)
 
 
 row, col = np.shape(terrain1)
@@ -363,11 +347,11 @@ EX = np.mean(X_train,axis=0)
 EX[0]= 0
 EZ = np.mean(z_train,axis=0)
 
-#print(X_train.shape)
+
 X_train= (X_train- EX)*normaldistributionX
-#print(X_train.shape)
+
 z_train= (z_train -EZ)*normaldistributionZ
-#print(X_test.shape)
+
 X_test=(X_test - EX)*normaldistributionX
 
 
@@ -407,27 +391,28 @@ z_tilde = lassoreg.predict(X_train)
 
 """
 
-"""
+
+#Cross- Validation
 k= 5
 degrees = np.arange(1,6)
 
 #model = LinearRegression(fit_intercept= False) #OLS
-model = Ridge(alpha= 1e-7)
-#model = Lasso(precompute = True, alpha= 1e-7)
+model = Ridge(alpha= 1e-7) #Ridge
+#model = Lasso(precompute = True, alpha= 1e-7) #Lasso
 nlambdas = 500
 
 lambdas = np.logspace(-10,2, nlambdas) 
 average_MSE_test, average_R2_test, average_MSE_train, average_R2_train = CrossValidation(x,y,z,k, degrees, model, nlambdas)
 
-"""
+
 
 maxdegree = 5
 nBoots = 100
 degrees = np.arange(1,6)
 
-model = LinearRegression(fit_intercept= False)
-#model = Ridge(alpha= 1e-7)
-#model = Lasso(precompute = True, alpha= 1e-7)
+model = LinearRegression(fit_intercept= False) #OLS
+#model = Ridge(alpha= 1e-7) #Ridge
+#model = Lasso(precompute = True, alpha= 1e-7) #Lasso
 
 err, bi, var = BiasVarianceTradeoff(x,y,z, nBoots, degrees, maxdegree, model) # husk aa ikke ta med noise her
 
