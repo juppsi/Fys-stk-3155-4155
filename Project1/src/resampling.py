@@ -106,7 +106,6 @@ def BiasVarianceTradeoff(x,y,z, nBoots, degrees, maxdegree, model):
 	
 		X = Create_DesignMatrix(x, y, degree)
 		X_train, X_test, z_train, z_test = train_test_split(X, z, test_size = 0.2)
-		#model = make_pipeline(PolynomialFeatures(degree=degree),LinearRegression(fit_intercept=False))
 		zPred = np.empty((z_test.shape[0], nBoots))
 		ztilde = np.empty((z_test.shape[0], nBoots))
 
@@ -118,9 +117,7 @@ def BiasVarianceTradeoff(x,y,z, nBoots, degrees, maxdegree, model):
 			#print(X_train.shape, z_new.shape, X_new.shape)
 			#ztilde[:,i] = model.fit(X_new, z_new).predict(X_train).ravel()
 
-			#beta_OLS = np.linalg.inv(X_new.T @ (X_new))@ X_new.T @ z_new
-			#z_pred_bvt = X_test @ beta_OLS
-			#z_pred_bvt.ravel()
+
 
 		z_test = z_test.reshape(len(z_test),1)
 		error[degree-1] = np.mean( np.mean((z_test- zPred)**2, axis=1, keepdims=True) )
@@ -184,17 +181,9 @@ def CrossValidation(x,y,z,k, degrees, model, nlambdas):
 	
 	i= 0
 	for deg in degrees:
-		#X = Create_DesignMatrix(x, z, deg)
-
-		#X_train, X_test, z_train, z_test = train_test_split(X, z, test_size = 0.2)
-		#array_size_thingy = len(z_test)
-
-		#zPred= np.empty((array_size_thingy,k))
+		
 		j=0
 
-		#model = LinearRegression(fit_intercept= False)
-		#model = make_pipeline(PolynomialFeatures(degree=deg),LinearRegression(fit_intercept=False))
-		
 
 		R2_values_test = []
 		R2_values_train = []
@@ -235,16 +224,14 @@ def CrossValidation(x,y,z,k, degrees, model, nlambdas):
 
 			R2_values_test.append(R2(ztest,z_pred_cv))
 			MSE_values_test.append(MSE(ztest, z_pred_cv))
-			Variance_values_test.append(VarianceCalc(z_pred_cv))
-			Bias_values_test.append(BiasCalc(ztest, z_pred_cv))
+			
 
 			z_pred_train_coef = model.fit(Xtrain_cv, ztrain)
 			z_pred_train = model.predict(Xtrain_cv)
 
 			R2_values_train.append(R2(ztrain,z_pred_train))
 			MSE_values_train.append(MSE(ztrain, z_pred_train))
-			Variance_values_train.append(VarianceCalc(z_pred_train))
-			Bias_values_train.append(BiasCalc(ztest, z_pred_train))
+			
 
 			#print(R2_values_train)
 			#print(R2_values_test)
@@ -263,16 +250,14 @@ def CrossValidation(x,y,z,k, degrees, model, nlambdas):
 
 		average_R2_train.append(np.mean(R2_values_train))
 		average_MSE_train.append(np.mean(MSE_values_train))
-		average_bias_train.append(np.mean(Bias_values_train))
-		average_variance_train.append(np.mean(Variance_values_train))
+	
 
 		average_R2_test.append(np.mean(R2_values_test))
 		average_MSE_test.append(np.mean(MSE_values_test))
-		average_bias_test.append(np.mean(Bias_values_test))
-		average_variance_test.append(np.mean(Variance_values_test))
+		
 
 		
-		
+		"""
 		print(average_R2_test)
 		print('-----')
 		print(average_R2_train)	
@@ -281,7 +266,7 @@ def CrossValidation(x,y,z,k, degrees, model, nlambdas):
 		print('-----')
 		print(average_MSE_train)
 		
-		
+		"""
 
 	
 		#plt.plot(degrees, np.array(R2_values_test), label ='R2 Test data')
@@ -290,11 +275,7 @@ def CrossValidation(x,y,z,k, degrees, model, nlambdas):
 		plt.plot(degrees, np.array(MSE_values_test), label ='MSE Test data')
 		plt.plot(degrees, np.array(MSE_values_train), label='MSE Train data')
 		
-		#plt.plot(degrees, np.array(Variance_values_test), label ='Variance Test data')
-		#plt.plot(degrees, np.array(Variance_values_train), label='Variance Train data')
 		
-		#plt.plot(degrees, np.array(Bias_values_test), label ='Bias Test data')
-		#plt.plot(degrees, np.array(Bias_values_train), label='Bias Train data')
 		plt.xlabel('Degree')
 		plt.ylabel('MSE Values')
 		plt.title('MSE as a function of polynomial degree %s \n Ridge Regression with $\lambda = 1e-7$' %deg)
@@ -311,39 +292,6 @@ def CrossValidation(x,y,z,k, degrees, model, nlambdas):
 
 
 """
-datapoints = 100
-degree = 5
-
-
-x = np.linspace(0,1,datapoints)
-y = np.linspace(0,1,datapoints)
-
-
-x,y  = np.meshgrid(x,y)
-noise = 0.5*np.random.rand(len(x))
-z= FrankeFunction(x,y)
-
-z = z.reshape(-1)
-X = Create_DesignMatrix(x, y, degree)
-
-X_train, X_test, z_train, z_test = train_test_split(X, z, test_size = 0.2)
-
-beta_OLS = (np.linalg.inv(X.T @ X)@ X.T @ z)
-z_predict_ols = X_test @ beta_OLS
-z_tilde = X_train @ beta_OLS
-
-
-print('Training MSE: {}'.format(MSE(z_train, z_tilde)))
-print('Test MSE: {}'.format(MSE(z_test, z_predict_ols)))
-
-print('Training R2: {}'.format(R2(z_train, z_tilde)))
-print('Test MSE: {}'.format(R2(z_test, z_predict_ols)))
-
-print('Variance: {}'.format(np.var(beta_OLS)))
-
-"""
-
-"""
 z = np.reshape(z,(iterations, iterations))
 fig = plt.figure()
 ax = fig.gca(projection='3d')
@@ -356,10 +304,7 @@ ax.zaxis.set_major_formatter(FormatStrFormatter('%.02f'))
 fig.colorbar(surf, shrink=0.5, aspect=5)
 plt.show()
 """
-
-
-
-#Resampling
+# defining x,y, z
 
 datapoints = 100
 degree = 5
@@ -377,8 +322,7 @@ x= np.ravel(x)
 y= np.ravel(y)
 z = np.ravel(z)
 
-k= 5
-
+k= 5 #kfold
 
 
 #CROSSVALIDATION
@@ -389,17 +333,12 @@ degrees = np.arange(1,6)
 nlambdas = 500
 lambdas = np.logspace(-10,2, nlambdas) 
 #model = LinearRegression(fit_intercept= False) #OLS
-model = Ridge(alpha= 1e-7)
-#model = Lasso(precompute = True, alpha= 1e-7)
+model = Ridge(alpha= 1e-7) #Ridge 
+#model = Lasso(precompute = True, alpha= 1e-7) #Lasso
 average_MSE_test, average_R2_test, average_MSE_train, average_R2_train= CrossValidation(x,y,z, k, degrees, model, nlambdas) 
 
-#print('Average MSE: {}'.format(average_MSE))
-#print('Average R2: {}'.format(average_R2))
 
 
-
-
-"""
 
 #BIASVARIANCETRADEOFF
 
@@ -408,14 +347,13 @@ maxdegree = 5
 nBoots = 100
 degrees = np.arange(1,6)
 
-#model = LinearRegression(fit_intercept= False)
-#model = Ridge(alpha= 1e-7)
-model = Lasso(precompute = True, alpha= 1e-7)
+#model = LinearRegression(fit_intercept= False) #OLS
+#model = Ridge(alpha= 1e-7) #Ridge 
+model = Lasso(precompute = True, alpha= 1e-7) #Lasso
 
 err, bi, var = BiasVarianceTradeoff(x,y,z, nBoots, degrees, maxdegree, model) # husk aa ikke ta med noise her
 
 
-"""
 
 
 
