@@ -91,57 +91,6 @@ plt.show()
 
 
 
-"""
-# only one simple layer with 100 neurons
-n_hidden_neurons = 100
-epochs = 100
-# store models for later use
-eta_vals = np.logspace(-5, 1, 7)
-lmbd_vals = np.logspace(-5, 1, 7)
-# store the models for later use
-DNN_scikit = np.zeros((len(eta_vals), len(lmbd_vals)), dtype=object)
-train_accuracy = np.zeros((len(eta_vals), len(lmbd_vals)))
-sns.set()
-for i, eta in enumerate(eta_vals):
-	for j, lmbd in enumerate(lmbd_vals):
-		dnn = MLPRegressor(hidden_layer_sizes=(n_hidden_neurons), activation='logistic',
-							 alpha=lmbd, learning_rate_init=eta, max_iter=epochs)
-		dnn.fit(X_train, z_train)
-		DNN_scikit[i][j] = dnn
-		train_accuracy[i][j] = dnn.score(X_train, z_train)
-
-fig, ax = plt.subplots(figsize = (10, 10))
-sns.heatmap(train_accuracy, annot=True, ax=ax, cmap="viridis")
-ax.set_title("Training Accuracy")
-ax.set_ylabel("$\eta$")
-ax.set_xlabel("$\lambda$")
-plt.show()
-"""
-
-
-
-def run_Franke(activations):
-	n_points = 30
-	X, z = CreateFranke_data(n_points)
-	mlp = MLPClassifier(activations= 'logistic', hidden_layer_sizes =(300, 300, 300, 300), verbose=True, max_iter = 400, learning_rate='constant')
-	mlp.fit(X,z)
-	mlp_predict = mlp.predict()
-	mlp_predict = np.reshape(mlp_predict, (n_points,n_points))
-
-
-	fig, ax = plt.subplots(figsize = (10, 10))
-	sns.heatmap(mlp_predict, annot=True, ax=ax, cmap="viridis")
-	ax.set_title("MLP predict")
-	ax.set_ylabel("$X$")
-	ax.set_xlabel("$z$")
-	plt.show()
-
-
-
-
-
-
-
 
 
 
