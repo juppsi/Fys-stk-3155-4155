@@ -172,12 +172,7 @@ def LogisticRegression_self_test(X_train, X_test, y_train, y_test, learning_rate
 	n_inputs = X_train.shape[0]
 	n_features = X_train.shape[1]
 
-	#model_curve = np.trapz(n_inputs, n_features)
-	#optimal_curve = 0.788 + 0.5*0.2212
-	#baseline = 0.5
-	#area_ratio = (model_curve - baseline)/(optimal_curve - baseline)
-
-	#iteration = 20
+	
 
 	eta_ = 1e-12
 	beta_opt = np.random.randn(X_train.shape[1], 2)
@@ -299,21 +294,6 @@ def LogisticRegression_self_test(X_train, X_test, y_train, y_test, learning_rate
 	print('Area Ratio:',area_ratio)
 
 
-	"""
-	model = ax.lines[0]
-	baseline= ax.lines[1]
-	optimal = ax.lines[2]
-
-	model_curve = np.trapz(model.getydata(), model.getxdata())
-	optimal_curve = np.trapz(optimal.getydata(), optimal.getxdata())
-	area_baseline = np.trapz(baseline.getydata(), baseline.getxdata())
-
-	area_ratio = (model_curve - area_baseline)/(optimal_curve - area_baseline)
-
-	print(area_ratio)
-	"""
-
-
 	return accuracy, learning_rates
 
 
@@ -328,14 +308,10 @@ def LogisticRegression_self(X_train, X_test, y_train, y_test, learning_rates, it
 	n_features = X_train.shape[1]
 
 
-	#iteration = 1000
-
-	#eta_ = 1e-7
-	#beta_0 = np.random.uniform(-10000, 10000, m)
-	#calc_beta, norm = GradientDescent(X_train, beta_0, y_train, iteration, eta_)
+	
 
 
-	#for eta in np.logspace(np.log10(1e-6), np.log10(1e0), 7):
+	
 	accuracy = np.zeros(len(learning_rates))
 	auc_score = np.zeros(len(learning_rates))
 	area_ratio_curve = np.zeros(len(learning_rates))
@@ -346,35 +322,21 @@ def LogisticRegression_self(X_train, X_test, y_train, y_test, learning_rates, it
 		beta_0 = np.reshape(beta_0, (n_features, 1))
 		optimal_beta, norm = GradientDescent(X_train, beta_0, y_train, iteration, eta)
 
-		#print('beta zero:', beta_0)
-		#print('Optimal beta:', optimal_beta)
+		
 
 		predict= Probability(X_test, optimal_beta) #defining values to be between 0 and 1
 		yPred = (predict >= 0.5).astype(int) # converting to just 0 or 1
-		#accuracy[i,j] = np.mean(yPred == y_test)
+		
 		accuracy[i] = metrics.accuracy_score(y_test, yPred)
 		auc_score[i] = metrics.roc_auc_score(y_test, yPred)
 		difference = y_test - yPred
 
-		#area_ratio_curve[i,j] = area_ratio(y_test, yPred)
-
-		"""
-		if i> 0 and auc_score[i] > auc_score[i-1]:
-			best_pred_SGD= yPred
-		"""
+		
 
 		print('Accuracy {}, where learning rate= {} and iterations = {}'.format(np.mean(accuracy), eta, iteration))
-		#print('Classification equal 1:', np.sum(difference ==1))
-		#print('Classification equal 0:', np.sum(difference ==0))
-		#print('Classification equal -1:', np.sum(difference == -1))
 		print('AUC Score: {}'.format(np.mean(auc_score)))
 
-		"""
-		plt.plot(yPred, label='predict')
-		plt.plot(optimal_beta, label ='optimal beta')
-		plt.plot(y_test, label='test')
-		plt.show()
-		"""
+		
 	sns.set()
 	sns.heatmap(pd.DataFrame(accuracy),  annot= True, fmt='.4g')
 	plt.title('Grid-search for logistic regression')
@@ -388,19 +350,6 @@ def LogisticRegression_self(X_train, X_test, y_train, y_test, learning_rates, it
 	plt.ylim(b, t) # update the ylim(bottom, top) values
 	plt.show()
 
-	"""
-	sns.heatmap(pd.DataFrame(area_ratio_curve),  annot= True, fmt='.4g')
-	plt.title('Grid-search for logistic regression')
-	plt.ylabel('Learning rate: $\\eta$')
-	plt.xlabel('Regularization Term: $\\lambda$')
-	#plt.xticks(ticks=np.arange(len(learning_rates)) + 0.5, labels=learning_rates)
-	#plt.yticks(ticks=np.arange(len(lambda_values)) + 0.5, labels=lambda_values)
-	b, t = plt.ylim() # discover the values for bottom and top
-	b += 0.5 # Add 0.5 to the bottom
-	t -= 0.5 # Subtract 0.5 from the top
-	plt.ylim(b, t) # update the ylim(bottom, top) values
-	plt.show()
-	"""
 
 	sns.heatmap(pd.DataFrame(auc_score),  annot= True, fmt='.4g')
 	plt.title('Grid-search for logistic regression')
@@ -430,138 +379,12 @@ def LogisticRegression_self(X_train, X_test, y_train, y_test, learning_rates, it
 	plt.show()
 
 	
-	#model_curve = np.trapz(n_inputs, n_features)
-	#optimal_curve = 0.788 + 0.5*0.2212
-	#area_baseline = 0.5
-	#area_ratio = (model_curve - baseline)/(optimal_curve - baseline)
-
-	"""
-	model = ax.lines[1]
-	baseline= ax.lines[2]
-	optimal=ax.lines[3]
-	model_curve = np.trapz(model.getydata(), model.getxdata())
-	optimal_curve = np.trapz(optimal.getydata(), optimal.getxdata())
-	area_baseline = np.trapz(baseline.getydata(), baseline.getxdata())
-
-	area_ratio = (model_curve - area_baseline)/(optimal_curve - area_baseline)
-
-	print(area_ratio)
-	"""
+	model_curve = auc_score
+	area_baseline = 0.5
+	area_ratio = (model_curve - area_baseline)/(area_baseline)
+	print('Area Ratio:',area_ratio)
 
 	return accuracy, learning_rates
-
-
-def LogisticReg(X_train, X_test, y_train, y_test, learning_rates, lambda_values, iteration):
-
-	# scoping number of training samples
-
-	n_inputs = X_train.shape[0]
-	n_features = X_train.shape[1]
-
-	#model_curve = np.trapz(n_inputs, n_features)
-	#optimal_curve = 0.788 + 0.5*0.2212
-	#baseline = 0.5
-	#area_ratio = (model_curve - baseline)/(optimal_curve - baseline)
-
-	#iteration = 1000
-
-	#eta_ = 1e-7
-	#beta_0 = np.random.uniform(-10000, 10000, m)
-	#calc_beta, norm = GradientDescent(X_train, beta_0, y_train, iteration, eta_)
-
-
-	#for eta in np.logspace(np.log10(1e-6), np.log10(1e0), 7):
-	accuracy = np.zeros((len(learning_rates), len(lambda_values)))
-	auc_score = np.zeros((len(learning_rates), len(lambda_values)))
-	area_ratio_curve = np.zeros((len(learning_rates), len(lambda_values)))
-
-	for i, eta in enumerate(learning_rates):
-		for j, lmbd in enumerate(lambda_values):
-			beta_0 = np.random.uniform(-0.5,0.5,n_features)
-			beta_0 = np.reshape(beta_0, (n_features, 1))
-			optimal_beta, norm = GradientDescent(X_train, beta_0, y_train, iteration, eta)
-
-			#print('beta zero:', beta_0)
-			#print('Optimal beta:', optimal_beta)
-
-			predict= Probability(X_test, optimal_beta) #defining values to be between 0 and 1
-			yPred = (predict >= 0.5).astype(int) # converting to just 0 or 1
-			#accuracy[i,j] = np.mean(yPred == y_test)
-			accuracy[i,j] = metrics.accuracy_score(y_test, yPred)
-			auc_score[i,j] = metrics.roc_auc_score(y_test, yPred)
-			difference = y_test - yPred
-
-			#area_ratio_curve[i,j] = area_ratio
-			"""
-			if i> 0 and auc_score[i] > auc_score[i-1]:
-				best_pred_SGD= yPred
-			"""
-
-			print('Accuracy {}, where learning rate= {} and iterations = {}'.format(np.mean(accuracy), eta, iteration))
-			#print('Classification equal 1:', np.sum(difference ==1))
-			#print('Classification equal 0:', np.sum(difference ==0))
-			#print('Classification equal -1:', np.sum(difference == -1))
-			print('Area ratio: {}'.format(np.mean(auc_score)))
-
-		"""
-		plt.plot(yPred, label='predict')
-		plt.plot(optimal_beta, label ='optimal beta')
-		plt.plot(y_test, label='test')
-		plt.show()
-		"""
-	sns.set()
-	sns.heatmap(pd.DataFrame(accuracy),  annot= True, fmt='.4g')
-	plt.title('Grid-search for logistic regression')
-	plt.ylabel('Learning rate: $\\eta$')
-	plt.xlabel('Regularization Term: $\\lambda$')
-	#plt.xticks(ticks=np.arange(len(learning_rates)) + 0.5, labels=learning_rates)
-	#plt.yticks(ticks=np.arange(len(lambda_values)) + 0.5, labels=lambda_values)
-	b, t = plt.ylim() # discover the values for bottom and top
-	b += 0.5 # Add 0.5 to the bottom
-	t -= 0.5 # Subtract 0.5 from the top
-	plt.ylim(b, t) # update the ylim(bottom, top) values
-	plt.show()
-
-	"""
-	sns.heatmap(pd.DataFrame(area_ratio_curve),  annot= True, fmt='.4g')
-	plt.title('Grid-search for logistic regression')
-	plt.ylabel('Learning rate: $\\eta$')
-	plt.xlabel('Regularization Term: $\\lambda$')
-	#plt.xticks(ticks=np.arange(len(learning_rates)) + 0.5, labels=learning_rates)
-	#plt.yticks(ticks=np.arange(len(lambda_values)) + 0.5, labels=lambda_values)
-	b, t = plt.ylim() # discover the values for bottom and top
-	b += 0.5 # Add 0.5 to the bottom
-	t -= 0.5 # Subtract 0.5 from the top
-	plt.ylim(b, t) # update the ylim(bottom, top) values
-	plt.show()
-	"""
-
-	sns.heatmap(pd.DataFrame(auc_score),  annot= True, fmt='.4g')
-	plt.title('Grid-search for logistic regression')
-	plt.ylabel('Learning rate: $\\eta$')
-	plt.xlabel('Regularization Term: $\\lambda$')
-	#plt.xticks(ticks=np.arange(len(learning_rates)) + 0.5, labels=learning_rates)
-	#plt.yticks(ticks=np.arange(len(lambda_values)) + 0.5, labels=lambda_values)
-	b, t = plt.ylim() # discover the values for bottom and top
-	b += 0.5 # Add 0.5 to the bottom
-	t -= 0.5 # Subtract 0.5 from the top
-	plt.ylim(b, t) # update the ylim(bottom, top) values
-	plt.show()
-
-	Confusion_Matrix(y_test, yPred)
-	#Confusion_Matrix(y_test, best_pred_SGD)
-
-	diff = np.concatenate((1- predict, predict), axis=1)
-
-	plot_roc(y_test, diff, plot_micro=False, plot_macro= False)
-	plt.show()
-
-	ax = plot_cumulative_gain(y_test, diff)
-	x_d, y_d = cumulative_gain_curve(y_test, diff[:,1])
-	plt.show()
-
-
-	return accuracy, learning_rates, lambda_values
 
 
 
@@ -611,19 +434,6 @@ def read_dataset():
 
 	X = scalar.fit_transform(X)
 
-	"""
-	fig, ax = plt.subplots()
-	for i in range(1,7):
-		sns.distplot(df['PAY_AMT{}'.format(i)],ax=ax, kde=False,label='PAY_AMT{}'.format(i),hist_kws={'log':True})
-	plt.ylabel('Count')
-	plt.legend()
-
-	fig, ax = plt.subplots()
-	for i in range(1,7):
-		sns.distplot(df['BILL_AMT{}'.format(i)],ax=ax, kde=False,label='BILL_AMT{}'.format(i),hist_kws={'log':True})
-	plt.ylabel('Count')
-	plt.legend()
-	"""
 	return X, y
 
 
@@ -663,130 +473,6 @@ def MSE(z_test, z_pred):
 def R2(z_test, z_pred):
 	R2 = 1 - np.mean((z_test-z_pred) ** 2) / np.mean((z_test - np.mean(z_test)) ** 2)
 	return R2
-
-def OLS(X_test, X_train, z_train):
-	beta = np.linalg.inv(X_train.T.dot(X_train)).dot(X_train.T).dot(z_train)
-	z_predict = X_test @ beta
-	z_tilde = X_train @ beta
-
-	return z_tilde, z_predict
-
-def bestCurve(y):
-	defaults = sum(y == 1)
-	total = len(y)
-	x = np.linspace(0, 1, total)
-	y1 = np.linspace(0, 1, defaults)
-	y2 = np.ones(total-defaults)
-	y3 = np.concatenate([y1,y2])
-	return x, y3
-
-
-
-def cv_classification(num_splits, X, z, neutralnetwork, epochs, batch_size, eta, lmbd, iterations):
-	
-	k_fold = KFold(n_splits = num_splits, shuffle=True)
-
-	cv_auc_scores = np.zeros(num_splits)
-	cv_accuracy_scores = np.zeros(num_splits)
-
-	i = 0
-
-	for train_inds, test_inds in k_fold.split(X):
-		sc = StandardScaler()
-
-		x_train = X[train_inds]
-		x_test = X[test_inds]
-
-		x_train = sc.fit_transform(x_train)
-		x_test = sc.transform(x_test)
-
-		y_train = z[train_inds]
-		y_test = z[test_inds]
-
-		neutralnetwork.train(iterations)
-
-		proba = neutralnetwork.predict(x_test)
-
-		cv_auc_scores[i] = metrics.roc_auc_score(y_test, proba)
-		print("AUC-score: ", metrics.roc_auc_score( y_test, proba))
-
-		predicted = np.where(proba >= 0.5, 1, 0)
-		cv_accuracy_scores[i] = metrics.accuracy_score(y_test, predicted)
-
-		print("Accuracy: ", metrics.accuracy_score(y_test, predicted))
-		print(confusion_matrix(y_test, predicted))
-
-		i+=1
-
-	cv_auc = np.mean(cv_auc_scores)
-	cv_accuracy = np.mean(cv_accuracy_scores)
-
-	print("CV-AUC: ", cv_auc, "  CV-accuracy: ", cv_accuracy )
-	return cv_auc, cv_accuracy
-
-
-def cv_regression(num_splits, X, z, neutralnetwork, epochs, eta, lmbd, iterations):
-
-	k_fold = KFold(n_splits = num_splits, shuffle=True)
-
-	cv_mse_scores = np.zeros(num_splits)
-	cv_r2 = np.zeros(num_splits)
-
-	i = 0
-
-	for train_inds, test_inds in k_fold.split(X):
-		sc = StandardScaler()
-
-		x_train = X[train_inds]
-		x_test = X[test_inds]
-
-		x_train = sc.fit_transform(x_train)
-		x_test = sc.transform(x_test)
-
-		y_train = z[train_inds]
-		y_test = z[test_inds]
-
-		neutralnetwork.train(iterations,eta, lmbd)
-
-		pred = neutralnetwork.predict_regression_franke(x_test)
-
-		print(y_test.shape)
-		print(pred.shape)
-
-		cv_mse_scores[i] = metrics.mean_squared_error(y_test, pred)
-
-		cv_r2[i] = metrics.r2_score(y_test, pred)
-
-		#print(i)
-		#print("MSE_final: ", cv_mse_scores[i])
-
-		i+=1
-
-	cv_mse = np.mean(cv_mse_scores)
-
-	print("CV-MSE: ", cv_mse)
-	return cv_mse
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
