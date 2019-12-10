@@ -62,71 +62,10 @@ NN_GRID = nn.GridSearch_regression(X_test, X_train, z_test, z_train, lambda_valu
 
 
 #Confusion_Matrix(z_test, z_pred)
-"""
-r2_score = metrics.r2_score(z_test,z_pred)
-MSE = metrics.mean_squared_error(z_test,z_pred)
-#accuracy = metrics.accuracy_score(z_test, z_pred)
-
-print('eta =', eta)
-print('lmbd =', lmbd)
-#print('accuracy =', accuracy)
-print('MSE =', MSE)
-print('R2 SCORE=', r2_score)
-
-eta_vals = np.logspace(-5,1,7)
-lmdb_vals = np.logspace(-5,1,7)
-
-NN_GRID = nn.GridSearch_regression(X_test, X_train, z_test, z_train, lmbd_vals= np.logspace(-5,1,7), eta_vals= np.logspace(-5,1,7), iterations=100)
-
-best_mse, best_lmbd, best_eta = NN_GRID.output_values()
-
-print('best MSE:', best_mse)
-print('lambda:', best_lmbd)
-print('Learning rate:', best_eta)
-"""
-
-"""
-
-#OLS METHOD
-
-beta_OLS = np.linalg.inv(X_train.T.dot(X_train)).dot(X_train.T).dot(z_train)
-z_tilde_ols = X_train @ beta
-z_pred_ols = X_test @ beta
-
-print("MSE_test_ols:", MSE(z_test, z_pred_ols))
-print("MSE_train_ols:", MSE(z_train, z_pred_ols))
-print("R2_test_ols:", R2(z_train, z_pred_ols))
-print("R2_train_ols:", R2(z_train, z_pred_ols))
-
-Confusion_Matrix(z_test, z_pred_ols)
-"""
 
 
-"""
-num_splits = 5
-z= np.expand_dims(z, axis=1)
 
-#cv_regression(num_splits, X, z, nn, epochs=100, eta=1e-5, lmbd=0.0, iterations =100)
 
-learning_rates = np.logspace(-6,1,8)
-lambda_values = np.logspace(-6,1,8)
-epochs_ = 10
-
-mse = np.zeros((len(learning_rates), len(lambda_values)))
-for i, eta in enumerate(learning_rates):
-	for j, lmbd in enumerate(lambda_values):
-		cv_mse = cv_regression(num_splits, X, z, nn, epochs=10, eta=1e-5, lmbd=0.0, iterations =100)
-
-		mse[i,j] = cv_mse
-
-sns.heatmap(pd.DataFrame(mse),  annot= True, fmt='g')
-plt.title('CV Frankes Function')
-#plt.ylim(top = 0, bottom = learning_rates)
-plt.ylabel('Learning rate: $\\eta$')
-plt.xlabel('Regularization Term: $\\lambda$')
-plt.show()
-
-"""
 
 
 
