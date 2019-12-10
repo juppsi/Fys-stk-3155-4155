@@ -22,8 +22,8 @@ from functions import *
 
 """
 
-A neural network class used to perform with different kind of data sets. 
-There are several functions in this class feed-forward, backpropagation, grid-search, create-bias-and-weights, predict that represents
+A neural network class used to perform on different data sets. 
+There are several functions in this class feed-forward, backpropagation, grid-search, create-bias-and-weights, predict, which represents
 different parts of the neural network performance.
 
 """
