@@ -1,5 +1,5 @@
 
-Project 2 in FYS-STK4155.
+**Project 2 in FYS-STK4155**
 
 Title: Classification and Regression, from linear and logistic regression to neural networks
 
