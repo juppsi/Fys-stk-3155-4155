@@ -39,8 +39,6 @@ def logreg():
 	LogisticRegression_self_test(X_train, X_test, y_train, y_test, learning_rates, epochs, iterations)
 
 
-	print(df)
-
 
 def run_NN():
 	"""
