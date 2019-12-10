@@ -45,7 +45,6 @@ class NeuralNet:
 		self.X_data_full = X_data
 		self.y_data_full = y_data
 
-
 		self.activations = activations
 		self.output_activations = output_activations
 		self.n_categories = n_categories
@@ -78,16 +77,9 @@ class NeuralNet:
 		self.best_lmbd = 0
 		self.best_mse = 1e8
 
-		#self.print_values()
+		
 		#creates the structure of the activations, weights and bias
 		self.create_biases_and_weights()
-
-	def print_values(self):
-		print('Input values:', self.n_inputs)
-		print('Hidden Layers:', self.n_hidden_layers)
-		print('Output categories:', self.n_categories)
-		print('Neurons per hidden layers:', self.n_hidden_neuron)
-
 
 	def create_biases_and_weights(self):
 	
@@ -122,11 +114,9 @@ class NeuralNet:
 		#iteration of hidden layers
 		for i in range(1, self.n_hidden_layers +1):	
 			self.z[i] = np.matmul(self.a[i-1], self.w[i-1]) + self.b[i-1]
-			#self.z[i] = self.z
-			#self.z = self.z
-
+			
 			self.a[i] = self.activations(self.z[i])
-			#self.a[i] = self.a
+			
 
 		#Output layer
 		self.z[-1] = np.matmul(self.a[-2], self.w[-1]) + self.b[-1]
@@ -157,14 +147,10 @@ class NeuralNet:
 		
 		error_layer = self.a_o -self.y_data_full.reshape(self.a_o.shape) #many
 
-		#error_layer = self.output_activations.derivative(self.a[-1])*(self.a_o -self.n_features)
-		#total = np.mean(error_layer)
-		#old_w = self.w[-1]
-
+		
 		#output layer
 		w_gradient, b_gradient = self.gradients(error_layer, -1)
-		#print(self.w[-1].shape)
-		#print(w_gradient.shape)
+		
 		self.w[-1] -= self.eta * w_gradient
 		self.b[-1] -= self.eta * b_gradient
 
@@ -173,7 +159,7 @@ class NeuralNet:
 		# from last hidden later to first hidden layer
 		for i in range(self.n_hidden_layers, 0, -1):
 			#previous error to propagate the error back to the first hidden layer
-			#error_hidden = np.matmul(error_old, self.w[layer].T) * self.a[i]*(1-self.a[i])
+			
 			error_hidden = np.matmul(error_old, self.w[i].T) * self.activations.derivative(self.a[i])
 
 			w_gradient, b_gradient = self.gradients(error_hidden, i-1)
@@ -208,24 +194,6 @@ class NeuralNet:
 		return y_Pred
 
 
-
-	"""
-
-	def predict(self, X_test):
-		probabilities = self.feed_forward()
-
-		if self.regression:
-			return probabilities
-		else:
-			probabilities_ = np.empty(len(probabilities), dtype=np.uint)
-			for i in range(len(probabilities)):
-				if probabilities[i]> 0.5:
-					probabilities_[i] = 1
-				else:
-					probabilities_[i] = 0
-			return probabilities_
-	"""
-
 	def train(self, iterations):
 		"""
 		Train the feed forward and back propagation for a number of iteration.
@@ -249,22 +217,12 @@ class NeuralNet:
 
 
 
-
-
 	def GridSearch(self, X_test, X_train, y_test, y_train, lmbd_vals, eta_vals, iterations):
-	"""
-	Compares the best learning rate and regularization parameter for multiple-cases.
-	Calculate AUC-score and accuracy score.
-	"""
-	#def GridSearch(self, X, y, lmbd_vals, eta_vals, iterations):
-
-		#model_curve = np.trapz(n_inputs, n_features)
-		#optimal_curve = 0.788 + 0.5*0.2212
-		#baseline = 0.5
-		#area_ratio = (model_curve - baseline)/(optimal_curve - baseline)
-
-		#X_train, X_test, y_train, y_test = train_test_split(X,y, test_size = 0.2, shuffle=True, random_state=1)
-		#store the model for heatmaps
+		"""
+		Compares the best learning rate and regularization parameter for multiple-cases.
+		Calculate AUC-score and accuracy score.
+		"""
+	
 		train_accuracy = np.zeros((len(eta_vals), len(lmbd_vals)))
 		test_accuracy = np.zeros((len(eta_vals), len(lmbd_vals)))
 		roc_score_test = np.zeros((len(eta_vals), len(lmbd_vals)))
@@ -278,16 +236,10 @@ class NeuralNet:
 				#self.print_values()
 				self.train(iterations)
 
-				#nn.train(iterations,eta= eta, lmbd =lmbd)
-				#NN[i,j] =nn
-
+				
 				test_pred = self.predict(X_test)
 				train_pred = self.predict(X_train)
-				
-
-				#accuracy_test = np.mean(test_pred == y_test[:,0])
-				#accuracy_train = np.mean(train_pred == y_test[:,0])
-				#NN_numpy[i,j] = accuracy
+			
 
 				accuracy = accuracy_score(y_test, test_pred)
 			
@@ -313,8 +265,7 @@ class NeuralNet:
 				print('Learning rate:', self.best_eta)
 				#print('Train Area ratio:', np.mean(roc_score_train))
 				#print('Test Area ratio:', np.mean(roc_score_test))
-				#print('R2 score:', R2score)
-				#print('MSE:', MSE)
+				
 
 		sns.set()
 		sns.heatmap(train_accuracy, annot=True, cmap="viridis", fmt='.4g')
@@ -378,10 +329,10 @@ class NeuralNet:
 		
 
 	def GridSearch_regression(self, X_test, X_train, y_test, y_train, lmbd_vals, eta_vals, iterations):
-	"""
-	Compares the best learning rate and regularization parameter for regression-cases.
-	Calculate MSE and R2-score.
-	"""
+		"""
+		Compares the best learning rate and regularization parameter for regression-cases.
+		Calculate MSE and R2-score.
+		"""
 		#store the model for heatmaps
 		train_mse = np.zeros((len(eta_vals), len(lmbd_vals)))
 		test_mse = np.zeros((len(eta_vals), len(lmbd_vals)))
@@ -400,11 +351,8 @@ class NeuralNet:
 				train_pred = self.predict_regression_franke(X_train)
 				y_Pred = self.predict_regression_franke(X_test)
 
-				
-
 				#R2_score = metrics.r2_score(y_test,y_Pred)
 				MSE = metrics.mean_squared_error(y_test,y_Pred)
-
 
 				train_mse[i,j] = metrics.mean_squared_error(y_train, train_pred)
 				test_mse[i,j]  = metrics.mean_squared_error(y_test,test_pred)
@@ -472,150 +420,6 @@ class NeuralNet:
 		plt.xlabel('Regularization Term: $\\lambda$')
 		#plt.savefig('test_r2_franke_nn.png')
 		plt.show()
-
-
-	def output_values(self):
-		return self.best_accuracy, self.best_lmbd, self.best_eta
-
-	def output_values_regression(self):
-		return self.best_mse, self.best_lmbd, self.best_eta
-	
-
-
-
-	
-
-
-
-"""
-	def train(self, iterations,X_test, y_test):
-
-		sns.set()
-
-		accuracy_train = np.zeros((len(eta_vals), len(lmbd_vals)))
-		accuracy_test = np.zeros((len(eta_vals), len(lmbd_vals)))
-		MSE_train = np.zeros((len(eta_vals), len(lmbd_vals)))
-		MSE_test = np.zeros((len(eta_vals), len(lmbd_vals)))
-		R2_train = np.zeros((len(eta_vals), len(lmbd_vals)))
-		R2_test = np.zeros((len(eta_vals), len(lmbd_vals)))
-
-		data_indices = np.arange(self.n_inputs)
-
-		for i in range(len(eta_vals)):
-			for j in range(len(lmbd_vals)):
-
-				self.feed_forward()
-				self.backpropagation()
-				train_pred = 
-
-			accuracy_test[i] = accuracy_score(y_test, self.predict(X_test))
-			accuracy_train[i] = accuracy_score(self.y_data_full, self.predict(self.X_data_full))
-
-			MSE_test[i] = mean_squared_error(y_test, self.predict(X_test))
-			MSE_train[i] = mean_squared_error(self.y_data_full, self.predict(self.X_data_full))
-
-			R2_test[i] = r2_score(y_test, self.predict(X_test))
-			R2_train[i] = r2_score(self.y_data_full, self.predict(self.X_data_full))
-
-
-		fig, ax = plt.subplots(figsize = (10, 10))
-		sns.heatmap(accuracy_train, annot=True, ax=ax, cmap="viridis")
-		ax.set_title("Training Accuracy")
-		ax.set_ylabel("$\eta$")
-		ax.set_xlabel("$\lambda$")
-		plt.show()
-
-		fig, ax = plt.subplots(figsize = (10, 10))
-		sns.heatmap(accuracy_test, annot=True, ax=ax, cmap="viridis")
-		ax.set_title("Test Accuracy")
-		ax.set_ylabel("$\eta$")
-		ax.set_xlabel("$\lambda$")
-		plt.show()
-
-
-
-		return accuracy_test, accuracy_train, MSE_test, MSE_train, R2_test, R2_train
-
-"""
-		
-		
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
