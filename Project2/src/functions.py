@@ -164,7 +164,7 @@ def stochastic_gradient_descent(X, beta, y, eta, epochs, iterations, batch_size=
 def LogisticRegression_self_test(X_train, X_test, y_train, y_test, learning_rates, epochs,  iteration):
 
 	"""
-	Logistic regression with stochastic gradient descent
+	Logistic regression with stochastic gradient descent and gradient descent.
 	"""
 
 	# scoping number of training samples
@@ -194,13 +194,13 @@ def LogisticRegression_self_test(X_train, X_test, y_train, y_test, learning_rate
 	for i, eta in enumerate(learning_rates):
 		beta_SGD = stochastic_gradient_descent(X_train, beta_opt, y_train, eta, epochs, iteration)
 		prob_SGD, predict_SGD= Probability(X_test, beta_SGD) #defining values to be between 0 and 1
-		#yPred_SGD = (predict_SGD >= 0.5).astype(int) # converting to just 0 or 1
-		#accuracy[i,j] = np.mean(yPred == y_test)
+		
+		
 		accuracy[i] = metrics.accuracy_score(y_test, predict_SGD)
 		auc_score[i] = metrics.roc_auc_score(y_test, predict_SGD)
 		difference = y_test - predict_SGD
 
-		#area_ratio_curve[i,j] = area_ratio
+		
 
 		if i> 0 and auc_score[i] > auc_score[i-1]:
 			best_pred_SGD= predict_SGD
@@ -208,9 +208,7 @@ def LogisticRegression_self_test(X_train, X_test, y_train, y_test, learning_rate
 	
 
 		print('Accuracy {}, learning rate= {}, iterations = {}'.format(accuracy[i], eta, iteration))
-		#print('Classification equal 1:', np.sum(difference ==1))
-		#print('Classification equal 0:', np.sum(difference ==0))
-		#print('Classification equal -1:', np.sum(difference == -1))
+	
 		print('Auc score: {}'.format(auc_score[i]))
 
 
@@ -297,94 +295,6 @@ def LogisticRegression_self_test(X_train, X_test, y_train, y_test, learning_rate
 	return accuracy, learning_rates
 
 
-def LogisticRegression_self(X_train, X_test, y_train, y_test, learning_rates, iteration):
-	"""
-	Logistic regression with gradient descent
-	"""
-
-	# scoping number of training samples
-
-	n_inputs = X_train.shape[0]
-	n_features = X_train.shape[1]
-
-
-	
-
-
-	
-	accuracy = np.zeros(len(learning_rates))
-	auc_score = np.zeros(len(learning_rates))
-	area_ratio_curve = np.zeros(len(learning_rates))
-
-	for i, eta in enumerate(learning_rates):
-		
-		beta_0 = np.random.uniform(-0.5,0.5,n_features)
-		beta_0 = np.reshape(beta_0, (n_features, 1))
-		optimal_beta, norm = GradientDescent(X_train, beta_0, y_train, iteration, eta)
-
-		
-
-		predict= Probability(X_test, optimal_beta) #defining values to be between 0 and 1
-		yPred = (predict >= 0.5).astype(int) # converting to just 0 or 1
-		
-		accuracy[i] = metrics.accuracy_score(y_test, yPred)
-		auc_score[i] = metrics.roc_auc_score(y_test, yPred)
-		difference = y_test - yPred
-
-		
-
-		print('Accuracy {}, where learning rate= {} and iterations = {}'.format(np.mean(accuracy), eta, iteration))
-		print('AUC Score: {}'.format(np.mean(auc_score)))
-
-		
-	sns.set()
-	sns.heatmap(pd.DataFrame(accuracy),  annot= True, fmt='.4g')
-	plt.title('Grid-search for logistic regression')
-	plt.ylabel('Learning rate: $\\eta$')
-	plt.xlabel('Regularization Term: $\\lambda$')
-	#plt.xticks(ticks=np.arange(len(learning_rates)) + 0.5, labels=learning_rates)
-	#plt.yticks(ticks=np.arange(len(lambda_values)) + 0.5, labels=lambda_values)
-	b, t = plt.ylim() # discover the values for bottom and top
-	b += 0.5 # Add 0.5 to the bottom
-	t -= 0.5 # Subtract 0.5 from the top
-	plt.ylim(b, t) # update the ylim(bottom, top) values
-	plt.show()
-
-
-	sns.heatmap(pd.DataFrame(auc_score),  annot= True, fmt='.4g')
-	plt.title('Grid-search for logistic regression')
-	plt.ylabel('Learning rate: $\\eta$')
-	plt.xlabel('Regularization Term: $\\lambda$')
-	#plt.xticks(ticks=np.arange(len(learning_rates)) + 0.5, labels=learning_rates)
-	#plt.yticks(ticks=np.arange(len(lambda_values)) + 0.5, labels=lambda_values)
-	b, t = plt.ylim() # discover the values for bottom and top
-	b += 0.5 # Add 0.5 to the bottom
-	t -= 0.5 # Subtract 0.5 from the top
-	plt.ylim(b, t) # update the ylim(bottom, top) values
-	plt.show()
-
-	#plot confusion matrix
-	Confusion_Matrix(y_test, yPred)
-	#Confusion_Matrix(y_test, best_pred_SGD)
-
-	diff = np.concatenate((1- predict, predict), axis=1)
-
-	#plot roc curve
-	plot_roc(y_test, diff, plot_micro=False, plot_macro= False)
-	plt.show()
-
-	#plot cumulative gain curve
-	ax = plot_cumulative_gain(y_test, diff)
-	#x_d, y_d = cumulative_gain_curve(y_test, diff[:,1])
-	plt.show()
-
-	
-	model_curve = auc_score
-	area_baseline = 0.5
-	area_ratio = (model_curve - area_baseline)/(area_baseline)
-	print('Area Ratio:',area_ratio)
-
-	return accuracy, learning_rates
 
 
 
