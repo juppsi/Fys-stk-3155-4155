@@ -1,4 +1,6 @@
-
+"""
+Numerical and analytical solution of 1 dimentional diffusion equation, using forward euler.
+"""
 import numpy as np
 import matplotlib.pyplot as plt
 import sys, math
