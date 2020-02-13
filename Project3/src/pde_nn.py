@@ -1,6 +1,6 @@
 """
 Computing the diffusion equation with neural network model.
-The code is modified from the pde-codes from the lecture notes. 
+
 """
 
 import autograd.numpy as np
