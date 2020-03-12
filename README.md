@@ -1,3 +1,3 @@
 # Fys-stk-4155
 
-Data analyis and Machine Learning
+Applied Data Analysis and Machine Learning
